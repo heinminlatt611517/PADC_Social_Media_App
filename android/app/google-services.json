@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "88055548058",
+    "project_id": "social-media-app-67290",
+    "storage_bucket": "social-media-app-67290.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88055548058:android:5b2fbbce9c899f941fb723",
+        "android_client_info": {
+          "package_name": "com.padc.social_media_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnLFAgyagky2LEi3ee7jPwmieFytd2L_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
