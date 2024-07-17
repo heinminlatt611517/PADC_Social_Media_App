@@ -1,15 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:social_media_app/analytics/firebase_analytics_tracker.dart';
 import 'package:social_media_app/data/models/authentication_model.dart';
 import 'package:social_media_app/data/models/authentication_model_impl.dart';
 import 'package:social_media_app/data/models/social_model.dart';
 import 'package:social_media_app/data/models/social_model_impl.dart';
 import 'package:social_media_app/data/vos/news_feed_vo.dart';
 import 'package:social_media_app/data/vos/user_vo.dart';
-
-import '../analytics/firebase_analytics_tracker.dart';
-import '../performance/firebase_performance_monitor.dart';
+import 'package:social_media_app/remote_config/firebase_remote_config.dart';
 
 class AddNewPostBloc extends ChangeNotifier {
   /// State
@@ -18,6 +17,8 @@ class AddNewPostBloc extends ChangeNotifier {
   bool isDisposed = false;
   bool isLoading = false;
   UserVO? _loggedInUser;
+
+  Color themeColor = Colors.black;
 
   /// Image
   File? chosenImageFile;
@@ -32,6 +33,9 @@ class AddNewPostBloc extends ChangeNotifier {
   final SocialModel _model = SocialModelImpl();
   final AuthenticationModel _authenticationModel = AuthenticationModelImpl();
 
+  /// Remote Configs
+  final FirebaseRemoteConfigs _firebaseRemoteConfig = FirebaseRemoteConfigs();
+
   AddNewPostBloc({int? newsFeedId}) {
     _loggedInUser = _authenticationModel.getLoggedInUser();
     if (newsFeedId != null) {
@@ -43,13 +47,18 @@ class AddNewPostBloc extends ChangeNotifier {
 
     /// Firebase
     _sendAnalyticsData(addNewPostScreenReached, null);
-    _startPerformanceMonitor();
+    _getRemoteConfigAndChangeTheme();
+  }
+
+  void _getRemoteConfigAndChangeTheme() {
+    themeColor = _firebaseRemoteConfig.getThemeColorFromRemoteConfig();
+    _notifySafely();
   }
 
   void _prepopulateDataForAddNewPost() {
     userName = _loggedInUser?.userName ?? "";
     profilePicture =
-        "https://thumbs.dreamstime.com/b/businessman-icon-vector-male-avatar-profile-image-profile-businessman-icon-vector-male-avatar-profile-image-182095609.jpg";
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
     _notifySafely();
   }
 
@@ -92,7 +101,6 @@ class AddNewPostBloc extends ChangeNotifier {
           _notifySafely();
           _sendAnalyticsData(
               editPostAction, {postId: mNewsFeed?.id.toString() ?? ""});
-          _stopPerformanceMonitor();
         });
       } else {
         return _createNewNewsFeedPost().then((value) {
@@ -126,15 +134,6 @@ class AddNewPostBloc extends ChangeNotifier {
   /// Analytics
   void _sendAnalyticsData(String name, Map<String, String>? parameters) async {
     await FirebaseAnalyticsTracker().logEvent(name, parameters);
-  }
-
-  /// Performance
-  void _startPerformanceMonitor() {
-    FirebasePerformanceMonitor().startTrace();
-  }
-
-  void _stopPerformanceMonitor() {
-    FirebasePerformanceMonitor().stopTrace();
   }
 
   @override
