@@ -59,11 +59,11 @@ class AddNewPostPage extends StatelessWidget {
                   top: MARGIN_XLARGE,
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
-                child: SingleChildScrollView(
+                child: const SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       ProfileImageAndNameView(),
                       SizedBox(
                         height: MARGIN_LARGE,
